@@ -108,7 +108,9 @@ export default function BookingDetails() {
         let protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         if (import.meta.env.VITE_API_URL) {
           try {
-            const parsed = new URL(import.meta.env.VITE_API_URL);
+            const raw = import.meta.env.VITE_API_URL.trim();
+            const fullUrl = raw.startsWith('http') ? raw : `https://${raw}`;
+            const parsed = new URL(fullUrl);
             wsHost = parsed.host;
             protocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:';
           } catch (e) {
