@@ -34,8 +34,6 @@ services:
   - type: web
     name: localfix-frontend
     runtime: static
-    region: oregon
-    plan: free
     rootDir: frontend
     buildCommand: "npm install && npm run build"
     staticPublishPath: dist
