@@ -1,8 +1,10 @@
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from pathlib import Path
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from app.core.config import settings
 from app.services.storage_service import AVATARS_DIR, ensure_storage_dirs
@@ -68,9 +70,19 @@ async def add_security_headers(request, call_next):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     return response
 
-# Root status endpoint
-@app.get("/")
-def home():
+FRONTEND_DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+
+# Root endpoint: Serves React SPA to browsers, or API metadata in JSON mode
+@app.get("/", include_in_schema=False)
+def root(request: Request):
+    accept_header = request.headers.get("accept", "")
+    index_file = FRONTEND_DIST / "index.html"
+
+    # Browsers navigate with text/html in their Accept header
+    if "text/html" in accept_header and index_file.is_file():
+        return FileResponse(index_file)
+
+    # API consumers and health checks receive JSON metadata
     return {
         "project": settings.PROJECT_NAME,
         "version": settings.VERSION,
@@ -101,3 +113,25 @@ app.include_router(reviews_router, prefix=settings.API_V1_STR)
 app.include_router(communication_router)  # Handles /ws and /api/messages, /api/notifications
 app.include_router(disputes_router, prefix=settings.API_V1_STR)
 app.include_router(admin_router, prefix=settings.API_V1_STR)
+
+# Mount React production assets and SPA client-side routing fallback
+if FRONTEND_DIST.exists():
+    if (FRONTEND_DIST / "assets").is_dir():
+        app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIST / "assets")), name="react_assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_react_app(full_path: str):
+        if full_path.startswith("api") or full_path.startswith("ws") or full_path.startswith("docs") or full_path.startswith("redoc") or full_path == "openapi.json":
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Endpoint not found")
+
+        file_path = FRONTEND_DIST / full_path
+        if file_path.is_file():
+            return FileResponse(file_path)
+
+        index_file = FRONTEND_DIST / "index.html"
+        if index_file.is_file():
+            return FileResponse(index_file)
+
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="File not found")

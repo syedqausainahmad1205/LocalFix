@@ -1,5 +1,6 @@
-# Render Blueprint for LocalFix Platform
-# Deploys Managed PostgreSQL 16, FastAPI Backend, and React 19 Frontend with 1 Click
+# Render Blueprint for LocalFix Platform (Unified All-in-One Architecture)
+# Deploys Managed PostgreSQL 16 and a Single FastAPI + React Web Service
+# Result: Render creates EXACTLY 1 Single Working URL where everything is integrated!
 
 databases:
   - name: localfix-db
@@ -9,9 +10,9 @@ databases:
     user: localfix_user
 
 services:
-  # 1. FastAPI Python Backend Web Service
+  # Single Unified Web Service: Serves React Frontend + FastAPI Backend + Auto-seeds PostgreSQL
   - type: web
-    name: localfix-backend
+    name: localfix
     runtime: python
     region: oregon
     plan: free
@@ -29,21 +30,3 @@ services:
         value: 3.12.8
       - key: EMAIL_TEST_MODE
         value: "true"
-
-  # 2. React 19 + Vite Frontend Static Site
-  - type: web
-    name: localfix-frontend
-    runtime: static
-    rootDir: frontend
-    buildCommand: "npm install && npm run build"
-    staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          type: web
-          name: localfix-backend
-          property: host
