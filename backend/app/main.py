@@ -1,3 +1,5 @@
+import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -19,12 +21,31 @@ from app.api.communication import router as communication_router
 from app.api.disputes import router as disputes_router
 from app.api.admin import router as admin_router
 
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup actions
+    ensure_storage_dirs()
+    try:
+        from app.db.init_db import init_db
+        init_db()
+        from app.db.seed import seed_database
+        seed_database()
+        logger.info("Database tables initialized and master data verified.")
+    except Exception as e:
+        logger.warning(f"Startup DB init/seed note: {e}")
+    yield
+
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description=settings.PROJECT_DESCRIPTION,
     version=settings.VERSION,
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # CORS Middleware configuration
