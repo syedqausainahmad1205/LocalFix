@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import api from '../api/client';
+import api, { getApiAssetUrl } from '../api/client';
 import StatusBadge from '../components/StatusBadge';
 import ProviderMap from '../components/ProviderMap';
 import {
@@ -543,7 +543,7 @@ export default function SearchPage() {
                       <div className="shrink-0 mt-0.5">
                         {p.profile_photo_url ? (
                           <img
-                            src={p.profile_photo_url}
+                            src={getApiAssetUrl(p.profile_photo_url)}
                             alt={p.full_name}
                             className="w-12 h-12 rounded-xl object-cover border border-emerald-500 shadow-sm bg-slate-100 dark:bg-slate-700"
                           />

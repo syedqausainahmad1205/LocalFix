@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import api from '../api/client';
+import api, { getApiAssetUrl } from '../api/client';
 import {
   Wrench,
   Zap,
@@ -308,7 +308,7 @@ export default function Home() {
                   <div className="flex items-start gap-3.5">
                     {p.profile_photo_url ? (
                       <img
-                        src={p.profile_photo_url}
+                        src={getApiAssetUrl(p.profile_photo_url)}
                         alt={p.full_name}
                         className="w-14 h-14 rounded-2xl object-cover border border-emerald-500 shrink-0 shadow-sm"
                         onError={(e) => {

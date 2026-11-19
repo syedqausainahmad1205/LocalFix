@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Star, ShieldCheck, MapPin, ArrowRight, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getApiAssetUrl } from '../api/client';
 
 // Custom CSS-based pulse marker icons for high-tech appearance
 const createCustomIcon = (categorySlug, isAvailable) => {
@@ -110,7 +111,7 @@ export default function ProviderMap({ providers = [], userLocation = null, onSel
                     <div className="flex items-center gap-2">
                       {p.profile_photo_url && (
                         <img
-                          src={p.profile_photo_url}
+                          src={getApiAssetUrl(p.profile_photo_url)}
                           alt={p.full_name}
                           className="w-8 h-8 rounded-lg object-cover border border-emerald-500 shrink-0"
                         />

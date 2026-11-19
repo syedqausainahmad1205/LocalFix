@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../../api/client';
+import api, { getApiAssetUrl } from '../../api/client';
 import StatusBadge from '../../components/StatusBadge';
 import {
   LayoutDashboard,
@@ -181,7 +181,8 @@ export default function ProviderDashboard() {
   const completedBookings = bookings.filter((b) => b.current_status === 'completed');
   const totalEarnings = completedBookings.reduce((sum, b) => sum + parseFloat(b.total_amount || 0), 0);
 
-  const photoSrc = profile?.profile_photo_url || (profile?.profile_photo_path ? `/api/providers/photo/${profile.profile_photo_path}` : null);
+  const rawPhoto = profile?.profile_photo_url || (profile?.profile_photo_path ? `/api/providers/photo/${profile.profile_photo_path}` : null);
+  const photoSrc = rawPhoto ? getApiAssetUrl(rawPhoto) : null;
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">

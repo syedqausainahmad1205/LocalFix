@@ -104,9 +104,18 @@ export default function BookingDetails() {
 
     const connectWebSocket = () => {
       try {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const host = window.location.host;
-        const wsUrl = `${protocol}//${host}/ws/bookings/${id}/chat?token=${token}`;
+        let wsHost = window.location.host;
+        let protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        if (import.meta.env.VITE_API_URL) {
+          try {
+            const parsed = new URL(import.meta.env.VITE_API_URL);
+            wsHost = parsed.host;
+            protocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:';
+          } catch (e) {
+            console.warn("Could not parse VITE_API_URL for WebSocket:", e);
+          }
+        }
+        const wsUrl = `${protocol}//${wsHost}/ws/bookings/${id}/chat?token=${token}`;
 
         ws = new WebSocket(wsUrl);
         wsRef.current = ws;

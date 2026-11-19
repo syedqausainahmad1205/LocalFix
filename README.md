@@ -91,6 +91,7 @@ pytest tests/ -v
 ---
 
 ## 📁 Project Documentation
+* [Render Deployment Guide (Step-by-Step)](file:///Users/qausainahmad/localfix/docs/RENDER_DEPLOYMENT.md)
 * [PowerPoint Presentation (.pptx)](file:///Users/qausainahmad/localfix/presentation/LocalFix_Project_Presentation.pptx)
 * [Interactive HTML5 Slide Deck](file:///Users/qausainahmad/localfix/presentation/index.html)
 * [Presentation Transcript & Viva Q&A Guide](file:///Users/qausainahmad/localfix/docs/PRESENTATION.md)

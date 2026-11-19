@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import api from '../api/client';
+import api, { getApiAssetUrl } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import StatusBadge from '../components/StatusBadge';
 import {
@@ -178,7 +178,7 @@ export default function ProviderProfilePage() {
             <div className="shrink-0">
               {provider.profile_photo_url ? (
                 <img
-                  src={provider.profile_photo_url}
+                  src={getApiAssetUrl(provider.profile_photo_url)}
                   alt={provider.full_name}
                   className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-emerald-500 shadow-md bg-slate-100 dark:bg-slate-700"
                 />
